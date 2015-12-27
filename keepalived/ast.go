@@ -18,6 +18,10 @@ type ExprStmt struct {
 	value Expression
 }
 
+type GlobalDefsStmt struct {
+	stmts []Statement
+}
+
 type VrrpSyncGroupStmt struct {
 	group string
 	stmts []Statement
@@ -87,6 +91,15 @@ type AuthPassStmt struct {
 
 type GroupStmt struct {
 	exprs []Expression
+}
+
+func (x *GlobalDefsStmt) String() string {
+	var ret []string
+	ret = append(ret, "global_defs")
+	for _, v := range x.stmts {
+		ret = append(ret, "- "+v.String())
+	}
+	return strings.Join(ret[:], "\n")
 }
 
 func (x *VrrpSyncGroupStmt) String() string {

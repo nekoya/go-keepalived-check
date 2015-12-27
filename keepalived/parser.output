@@ -3,11 +3,12 @@ state 0
 	$accept: .statements $end 
 	statements: .    (1)
 
-	VRRP_SYNC_GROUP  shift 3
-	VRRP_INSTANCE  shift 4
-	VIRTUAL_SERVER_GROUP  shift 5
-	VIRTUAL_SERVER  shift 6
-	.  reduce 1 (src line 45)
+	GLOBAL_DEFS  shift 3
+	VRRP_SYNC_GROUP  shift 4
+	VRRP_INSTANCE  shift 5
+	VIRTUAL_SERVER_GROUP  shift 6
+	VIRTUAL_SERVER  shift 7
+	.  reduce 1 (src line 48)
 
 	statements  goto 1
 	statement  goto 2
@@ -23,1195 +24,1342 @@ state 2
 	statements:  statement.statements 
 	statements: .    (1)
 
-	VRRP_SYNC_GROUP  shift 3
-	VRRP_INSTANCE  shift 4
-	VIRTUAL_SERVER_GROUP  shift 5
-	VIRTUAL_SERVER  shift 6
-	.  reduce 1 (src line 45)
+	GLOBAL_DEFS  shift 3
+	VRRP_SYNC_GROUP  shift 4
+	VRRP_INSTANCE  shift 5
+	VIRTUAL_SERVER_GROUP  shift 6
+	VIRTUAL_SERVER  shift 7
+	.  reduce 1 (src line 48)
 
-	statements  goto 7
+	statements  goto 8
 	statement  goto 2
 
 state 3
-	statement:  VRRP_SYNC_GROUP.IDENT '{' vrrp_sync_group_stmts '}' 
+	statement:  GLOBAL_DEFS.'{' global_defs_stmts '}' 
 
-	IDENT  shift 8
+	'{'  shift 9
 	.  error
 
 
 state 4
-	statement:  VRRP_INSTANCE.IDENT '{' vrrp_instance_stmts '}' 
-
-	IDENT  shift 9
-	.  error
-
-
-state 5
-	statement:  VIRTUAL_SERVER_GROUP.IDENT '{' ip_ports '}' 
+	statement:  VRRP_SYNC_GROUP.IDENT '{' vrrp_sync_group_stmts '}' 
 
 	IDENT  shift 10
 	.  error
 
 
-state 6
-	statement:  VIRTUAL_SERVER.GROUP IDENT '{' virtual_server_stmts '}' 
+state 5
+	statement:  VRRP_INSTANCE.IDENT '{' vrrp_instance_stmts '}' 
 
-	GROUP  shift 11
+	IDENT  shift 11
+	.  error
+
+
+state 6
+	statement:  VIRTUAL_SERVER_GROUP.IDENT '{' ip_ports '}' 
+
+	IDENT  shift 12
 	.  error
 
 
 state 7
-	statements:  statement statements.    (2)
+	statement:  VIRTUAL_SERVER.GROUP IDENT '{' virtual_server_stmts '}' 
 
-	.  reduce 2 (src line 53)
+	GROUP  shift 13
+	.  error
 
 
 state 8
-	statement:  VRRP_SYNC_GROUP IDENT.'{' vrrp_sync_group_stmts '}' 
+	statements:  statement statements.    (2)
 
-	'{'  shift 12
-	.  error
+	.  reduce 2 (src line 56)
 
 
 state 9
-	statement:  VRRP_INSTANCE IDENT.'{' vrrp_instance_stmts '}' 
+	statement:  GLOBAL_DEFS '{'.global_defs_stmts '}' 
+	global_defs_stmts: .    (8)
 
-	'{'  shift 13
-	.  error
+	.  reduce 8 (src line 85)
 
+	global_defs_stmts  goto 14
 
 state 10
-	statement:  VIRTUAL_SERVER_GROUP IDENT.'{' ip_ports '}' 
+	statement:  VRRP_SYNC_GROUP IDENT.'{' vrrp_sync_group_stmts '}' 
 
-	'{'  shift 14
+	'{'  shift 15
 	.  error
 
 
 state 11
-	statement:  VIRTUAL_SERVER GROUP.IDENT '{' virtual_server_stmts '}' 
+	statement:  VRRP_INSTANCE IDENT.'{' vrrp_instance_stmts '}' 
 
-	IDENT  shift 15
+	'{'  shift 16
 	.  error
 
 
 state 12
-	statement:  VRRP_SYNC_GROUP IDENT '{'.vrrp_sync_group_stmts '}' 
-	vrrp_sync_group_stmts: .    (7)
+	statement:  VIRTUAL_SERVER_GROUP IDENT.'{' ip_ports '}' 
 
-	.  reduce 7 (src line 78)
+	'{'  shift 17
+	.  error
 
-	vrrp_sync_group_stmts  goto 16
 
 state 13
-	statement:  VRRP_INSTANCE IDENT '{'.vrrp_instance_stmts '}' 
-	vrrp_instance_stmts: .    (15)
+	statement:  VIRTUAL_SERVER GROUP.IDENT '{' virtual_server_stmts '}' 
 
-	.  reduce 15 (src line 90)
+	IDENT  shift 18
+	.  error
 
-	vrrp_instance_stmts  goto 17
 
 state 14
-	statement:  VIRTUAL_SERVER_GROUP IDENT '{'.ip_ports '}' 
-	ip_ports: .    (75)
+	statement:  GLOBAL_DEFS '{' global_defs_stmts.'}' 
+	global_defs_stmts:  global_defs_stmts.global_defs_stmt 
 
-	.  reduce 75 (src line 280)
+	NOTIFICATION_EMAIL  shift 21
+	NOTIFICATION_EMAIL_FROM  shift 22
+	SMTP_SERVER  shift 23
+	SMTP_CONNECT_TIMEOUT  shift 24
+	ROUTER_ID  shift 25
+	ENABLE_TRAPS  shift 26
+	'}'  shift 19
+	.  error
 
-	ip_ports  goto 18
+	global_defs_stmt  goto 20
 
 state 15
-	statement:  VIRTUAL_SERVER GROUP IDENT.'{' virtual_server_stmts '}' 
+	statement:  VRRP_SYNC_GROUP IDENT '{'.vrrp_sync_group_stmts '}' 
+	vrrp_sync_group_stmts: .    (16)
 
-	'{'  shift 19
-	.  error
+	.  reduce 16 (src line 97)
 
+	vrrp_sync_group_stmts  goto 27
 
 state 16
-	statement:  VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts.'}' 
-	vrrp_sync_group_stmts:  vrrp_sync_group_stmts.vrrp_sync_group_stmt 
+	statement:  VRRP_INSTANCE IDENT '{'.vrrp_instance_stmts '}' 
+	vrrp_instance_stmts: .    (24)
 
-	GROUP  shift 22
-	NOTIFY_MASTER  shift 23
-	NOTIFY_BACKUP  shift 24
-	NOTIFY_FAULT  shift 25
-	NOTIFY  shift 26
-	SMTP_ALERT  shift 27
-	'}'  shift 20
-	.  error
+	.  reduce 24 (src line 109)
 
-	vrrp_sync_group_stmt  goto 21
+	vrrp_instance_stmts  goto 28
 
 state 17
-	statement:  VRRP_INSTANCE IDENT '{' vrrp_instance_stmts.'}' 
-	vrrp_instance_stmts:  vrrp_instance_stmts.vrrp_instance_stmt 
+	statement:  VIRTUAL_SERVER_GROUP IDENT '{'.ip_ports '}' 
+	ip_ports: .    (84)
 
-	SMTP_ALERT  shift 33
-	STATE  shift 30
-	INTERFACE  shift 31
-	GARP_MASTER_DELAY  shift 32
-	VIRTUAL_ROUTER_ID  shift 34
-	PRIORITY  shift 35
-	ADVERT_INT  shift 36
-	AUTHENTICATION  shift 38
-	VIRTUAL_IPADDRESS  shift 37
-	'}'  shift 28
-	.  error
+	.  reduce 84 (src line 299)
 
-	vrrp_instance_stmt  goto 29
+	ip_ports  goto 29
 
 state 18
-	statement:  VIRTUAL_SERVER_GROUP IDENT '{' ip_ports.'}' 
-	ip_ports:  ip_ports.ip_port 
+	statement:  VIRTUAL_SERVER GROUP IDENT.'{' virtual_server_stmts '}' 
 
-	IP  shift 41
-	'}'  shift 39
+	'{'  shift 30
 	.  error
 
-	ip_port  goto 40
 
 state 19
-	statement:  VIRTUAL_SERVER GROUP IDENT '{'.virtual_server_stmts '}' 
-	virtual_server_stmts: .    (26)
+	statement:  GLOBAL_DEFS '{' global_defs_stmts '}'.    (3)
 
-	.  reduce 26 (src line 132)
+	.  reduce 3 (src line 63)
 
-	virtual_server_stmts  goto 42
 
 state 20
-	statement:  VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts '}'.    (3)
+	global_defs_stmts:  global_defs_stmts global_defs_stmt.    (9)
 
-	.  reduce 3 (src line 60)
+	.  reduce 9 (src line 87)
 
 
 state 21
-	vrrp_sync_group_stmts:  vrrp_sync_group_stmts vrrp_sync_group_stmt.    (8)
+	global_defs_stmt:  NOTIFICATION_EMAIL.'{' exprs '}' 
 
-	.  reduce 8 (src line 80)
+	'{'  shift 31
+	.  error
 
 
 state 22
-	vrrp_sync_group_stmt:  GROUP.'{' exprs '}' 
+	global_defs_stmt:  NOTIFICATION_EMAIL_FROM.expr 
 
-	'{'  shift 43
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
 	.  error
 
+	expr  goto 32
 
 state 23
-	vrrp_sync_group_stmt:  NOTIFY_MASTER.expr 
+	global_defs_stmt:  SMTP_SERVER.expr 
 
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
 	.  error
 
-	expr  goto 44
+	expr  goto 37
 
 state 24
-	vrrp_sync_group_stmt:  NOTIFY_BACKUP.expr 
+	global_defs_stmt:  SMTP_CONNECT_TIMEOUT.NUMBER 
 
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
+	NUMBER  shift 38
 	.  error
 
-	expr  goto 49
 
 state 25
-	vrrp_sync_group_stmt:  NOTIFY_FAULT.expr 
+	global_defs_stmt:  ROUTER_ID.expr 
 
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
 	.  error
 
-	expr  goto 50
+	expr  goto 39
 
 state 26
-	vrrp_sync_group_stmt:  NOTIFY.expr 
+	global_defs_stmt:  ENABLE_TRAPS.    (15)
 
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
-	.  error
+	.  reduce 15 (src line 95)
 
-	expr  goto 51
 
 state 27
-	vrrp_sync_group_stmt:  SMTP_ALERT.    (14)
+	statement:  VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts.'}' 
+	vrrp_sync_group_stmts:  vrrp_sync_group_stmts.vrrp_sync_group_stmt 
 
-	.  reduce 14 (src line 88)
+	GROUP  shift 42
+	NOTIFY_MASTER  shift 43
+	NOTIFY_BACKUP  shift 44
+	NOTIFY_FAULT  shift 45
+	NOTIFY  shift 46
+	SMTP_ALERT  shift 47
+	'}'  shift 40
+	.  error
 
+	vrrp_sync_group_stmt  goto 41
 
 state 28
-	statement:  VRRP_INSTANCE IDENT '{' vrrp_instance_stmts '}'.    (4)
+	statement:  VRRP_INSTANCE IDENT '{' vrrp_instance_stmts.'}' 
+	vrrp_instance_stmts:  vrrp_instance_stmts.vrrp_instance_stmt 
 
-	.  reduce 4 (src line 65)
+	SMTP_ALERT  shift 53
+	STATE  shift 50
+	INTERFACE  shift 51
+	GARP_MASTER_DELAY  shift 52
+	VIRTUAL_ROUTER_ID  shift 54
+	PRIORITY  shift 55
+	ADVERT_INT  shift 56
+	AUTHENTICATION  shift 58
+	VIRTUAL_IPADDRESS  shift 57
+	'}'  shift 48
+	.  error
 
+	vrrp_instance_stmt  goto 49
 
 state 29
-	vrrp_instance_stmts:  vrrp_instance_stmts vrrp_instance_stmt.    (16)
+	statement:  VIRTUAL_SERVER_GROUP IDENT '{' ip_ports.'}' 
+	ip_ports:  ip_ports.ip_port 
 
-	.  reduce 16 (src line 92)
+	IP  shift 61
+	'}'  shift 59
+	.  error
 
+	ip_port  goto 60
 
 state 30
-	vrrp_instance_stmt:  STATE.state_type 
+	statement:  VIRTUAL_SERVER GROUP IDENT '{'.virtual_server_stmts '}' 
+	virtual_server_stmts: .    (35)
 
-	MASTER  shift 53
-	BACKUP  shift 54
-	.  error
+	.  reduce 35 (src line 151)
 
-	state_type  goto 52
+	virtual_server_stmts  goto 62
 
 state 31
-	vrrp_instance_stmt:  INTERFACE.IDENT 
+	global_defs_stmt:  NOTIFICATION_EMAIL '{'.exprs '}' 
+	exprs: .    (97)
 
-	IDENT  shift 55
-	.  error
+	.  reduce 97 (src line 326)
 
+	exprs  goto 63
 
 state 32
-	vrrp_instance_stmt:  GARP_MASTER_DELAY.NUMBER 
+	global_defs_stmt:  NOTIFICATION_EMAIL_FROM expr.    (11)
 
-	NUMBER  shift 56
-	.  error
+	.  reduce 11 (src line 91)
 
 
 state 33
-	vrrp_instance_stmt:  SMTP_ALERT.    (20)
+	expr:  NUMBER.    (99)
 
-	.  reduce 20 (src line 107)
+	.  reduce 99 (src line 330)
 
 
 state 34
-	vrrp_instance_stmt:  VIRTUAL_ROUTER_ID.NUMBER 
+	expr:  IDENT.    (100)
 
-	NUMBER  shift 57
-	.  error
+	.  reduce 100 (src line 332)
 
 
 state 35
-	vrrp_instance_stmt:  PRIORITY.NUMBER 
+	expr:  STRING.    (101)
 
-	NUMBER  shift 58
-	.  error
+	.  reduce 101 (src line 333)
 
 
 state 36
-	vrrp_instance_stmt:  ADVERT_INT.NUMBER 
+	expr:  IP.    (102)
 
-	NUMBER  shift 59
-	.  error
+	.  reduce 102 (src line 334)
 
 
 state 37
-	vrrp_instance_stmt:  VIRTUAL_IPADDRESS.'{' ipaddresses '}' 
+	global_defs_stmt:  SMTP_SERVER expr.    (12)
 
-	'{'  shift 60
-	.  error
+	.  reduce 12 (src line 92)
 
 
 state 38
-	vrrp_instance_stmt:  AUTHENTICATION.'{' auth_stmts '}' 
+	global_defs_stmt:  SMTP_CONNECT_TIMEOUT NUMBER.    (13)
 
-	'{'  shift 61
-	.  error
+	.  reduce 13 (src line 93)
 
 
 state 39
-	statement:  VIRTUAL_SERVER_GROUP IDENT '{' ip_ports '}'.    (5)
+	global_defs_stmt:  ROUTER_ID expr.    (14)
 
-	.  reduce 5 (src line 69)
+	.  reduce 14 (src line 94)
 
 
 state 40
-	ip_ports:  ip_ports ip_port.    (76)
+	statement:  VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts '}'.    (4)
 
-	.  reduce 76 (src line 282)
+	.  reduce 4 (src line 68)
 
 
 state 41
-	ip_port:  IP.NUMBER 
+	vrrp_sync_group_stmts:  vrrp_sync_group_stmts vrrp_sync_group_stmt.    (17)
 
-	NUMBER  shift 62
-	.  error
+	.  reduce 17 (src line 99)
 
 
 state 42
-	statement:  VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts.'}' 
-	virtual_server_stmts:  virtual_server_stmts.virtual_server_stmt 
+	vrrp_sync_group_stmt:  GROUP.'{' exprs '}' 
 
-	DELAY_LOOP  shift 65
-	SORRY_SERVER  shift 71
-	LVS_SCHED  shift 66
-	LB_ALGO  shift 67
-	LVS_METHOD  shift 68
-	LB_KIND  shift 69
-	PROTOCOL  shift 70
-	REAL_SERVER  shift 72
-	'}'  shift 63
+	'{'  shift 64
 	.  error
 
-	virtual_server_stmt  goto 64
 
 state 43
-	vrrp_sync_group_stmt:  GROUP '{'.exprs '}' 
-	exprs: .    (88)
+	vrrp_sync_group_stmt:  NOTIFY_MASTER.expr 
 
-	.  reduce 88 (src line 307)
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
+	.  error
 
-	exprs  goto 73
+	expr  goto 65
 
 state 44
-	vrrp_sync_group_stmt:  NOTIFY_MASTER expr.    (10)
+	vrrp_sync_group_stmt:  NOTIFY_BACKUP.expr 
 
-	.  reduce 10 (src line 84)
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
+	.  error
 
+	expr  goto 66
 
 state 45
-	expr:  NUMBER.    (90)
+	vrrp_sync_group_stmt:  NOTIFY_FAULT.expr 
 
-	.  reduce 90 (src line 311)
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
+	.  error
 
+	expr  goto 67
 
 state 46
-	expr:  IDENT.    (91)
+	vrrp_sync_group_stmt:  NOTIFY.expr 
 
-	.  reduce 91 (src line 313)
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
+	.  error
 
+	expr  goto 68
 
 state 47
-	expr:  STRING.    (92)
+	vrrp_sync_group_stmt:  SMTP_ALERT.    (23)
 
-	.  reduce 92 (src line 314)
+	.  reduce 23 (src line 107)
 
 
 state 48
-	expr:  IP.    (93)
+	statement:  VRRP_INSTANCE IDENT '{' vrrp_instance_stmts '}'.    (5)
 
-	.  reduce 93 (src line 315)
+	.  reduce 5 (src line 72)
 
 
 state 49
-	vrrp_sync_group_stmt:  NOTIFY_BACKUP expr.    (11)
+	vrrp_instance_stmts:  vrrp_instance_stmts vrrp_instance_stmt.    (25)
 
-	.  reduce 11 (src line 85)
+	.  reduce 25 (src line 111)
 
 
 state 50
-	vrrp_sync_group_stmt:  NOTIFY_FAULT expr.    (12)
+	vrrp_instance_stmt:  STATE.state_type 
 
-	.  reduce 12 (src line 86)
+	MASTER  shift 70
+	BACKUP  shift 71
+	.  error
 
+	state_type  goto 69
 
 state 51
-	vrrp_sync_group_stmt:  NOTIFY expr.    (13)
+	vrrp_instance_stmt:  INTERFACE.IDENT 
 
-	.  reduce 13 (src line 87)
+	IDENT  shift 72
+	.  error
 
 
 state 52
-	vrrp_instance_stmt:  STATE state_type.    (17)
+	vrrp_instance_stmt:  GARP_MASTER_DELAY.NUMBER 
 
-	.  reduce 17 (src line 94)
+	NUMBER  shift 73
+	.  error
 
 
 state 53
-	state_type:  MASTER.    (83)
+	vrrp_instance_stmt:  SMTP_ALERT.    (29)
 
-	.  reduce 83 (src line 296)
+	.  reduce 29 (src line 126)
 
 
 state 54
-	state_type:  BACKUP.    (84)
+	vrrp_instance_stmt:  VIRTUAL_ROUTER_ID.NUMBER 
 
-	.  reduce 84 (src line 298)
+	NUMBER  shift 74
+	.  error
 
 
 state 55
-	vrrp_instance_stmt:  INTERFACE IDENT.    (18)
+	vrrp_instance_stmt:  PRIORITY.NUMBER 
 
-	.  reduce 18 (src line 99)
+	NUMBER  shift 75
+	.  error
 
 
 state 56
-	vrrp_instance_stmt:  GARP_MASTER_DELAY NUMBER.    (19)
-
-	.  reduce 19 (src line 103)
-
-
-state 57
-	vrrp_instance_stmt:  VIRTUAL_ROUTER_ID NUMBER.    (21)
-
-	.  reduce 21 (src line 111)
-
-
-state 58
-	vrrp_instance_stmt:  PRIORITY NUMBER.    (22)
-
-	.  reduce 22 (src line 115)
-
-
-state 59
-	vrrp_instance_stmt:  ADVERT_INT NUMBER.    (23)
-
-	.  reduce 23 (src line 119)
-
-
-state 60
-	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{'.ipaddresses '}' 
-	ipaddresses: .    (73)
-
-	.  reduce 73 (src line 276)
-
-	ipaddresses  goto 74
-
-state 61
-	vrrp_instance_stmt:  AUTHENTICATION '{'.auth_stmts '}' 
-	auth_stmts: .    (77)
-
-	.  reduce 77 (src line 284)
-
-	auth_stmts  goto 75
-
-state 62
-	ip_port:  IP NUMBER.    (87)
-
-	.  reduce 87 (src line 304)
-
-
-state 63
-	statement:  VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts '}'.    (6)
-
-	.  reduce 6 (src line 73)
-
-
-state 64
-	virtual_server_stmts:  virtual_server_stmts virtual_server_stmt.    (27)
-
-	.  reduce 27 (src line 134)
-
-
-state 65
-	virtual_server_stmt:  DELAY_LOOP.NUMBER 
+	vrrp_instance_stmt:  ADVERT_INT.NUMBER 
 
 	NUMBER  shift 76
 	.  error
 
 
-state 66
-	virtual_server_stmt:  LVS_SCHED.lb_algo 
+state 57
+	vrrp_instance_stmt:  VIRTUAL_IPADDRESS.'{' ipaddresses '}' 
 
-	RR  shift 78
-	WRR  shift 79
-	LC  shift 80
-	WLC  shift 81
-	LBLC  shift 82
-	SH  shift 83
-	DH  shift 84
+	'{'  shift 77
 	.  error
 
-	lb_algo  goto 77
+
+state 58
+	vrrp_instance_stmt:  AUTHENTICATION.'{' auth_stmts '}' 
+
+	'{'  shift 78
+	.  error
+
+
+state 59
+	statement:  VIRTUAL_SERVER_GROUP IDENT '{' ip_ports '}'.    (6)
+
+	.  reduce 6 (src line 76)
+
+
+state 60
+	ip_ports:  ip_ports ip_port.    (85)
+
+	.  reduce 85 (src line 301)
+
+
+state 61
+	ip_port:  IP.NUMBER 
+
+	NUMBER  shift 79
+	.  error
+
+
+state 62
+	statement:  VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts.'}' 
+	virtual_server_stmts:  virtual_server_stmts.virtual_server_stmt 
+
+	DELAY_LOOP  shift 82
+	SORRY_SERVER  shift 88
+	LVS_SCHED  shift 83
+	LB_ALGO  shift 84
+	LVS_METHOD  shift 85
+	LB_KIND  shift 86
+	PROTOCOL  shift 87
+	REAL_SERVER  shift 89
+	'}'  shift 80
+	.  error
+
+	virtual_server_stmt  goto 81
+
+state 63
+	global_defs_stmt:  NOTIFICATION_EMAIL '{' exprs.'}' 
+	exprs:  exprs.expr 
+
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
+	'}'  shift 90
+	.  error
+
+	expr  goto 91
+
+state 64
+	vrrp_sync_group_stmt:  GROUP '{'.exprs '}' 
+	exprs: .    (97)
+
+	.  reduce 97 (src line 326)
+
+	exprs  goto 92
+
+state 65
+	vrrp_sync_group_stmt:  NOTIFY_MASTER expr.    (19)
+
+	.  reduce 19 (src line 103)
+
+
+state 66
+	vrrp_sync_group_stmt:  NOTIFY_BACKUP expr.    (20)
+
+	.  reduce 20 (src line 104)
+
 
 state 67
-	virtual_server_stmt:  LB_ALGO.lb_algo 
+	vrrp_sync_group_stmt:  NOTIFY_FAULT expr.    (21)
 
-	RR  shift 78
-	WRR  shift 79
-	LC  shift 80
-	WLC  shift 81
-	LBLC  shift 82
-	SH  shift 83
-	DH  shift 84
-	.  error
+	.  reduce 21 (src line 105)
 
-	lb_algo  goto 85
 
 state 68
-	virtual_server_stmt:  LVS_METHOD.lb_kind 
+	vrrp_sync_group_stmt:  NOTIFY expr.    (22)
 
-	NAT  shift 87
-	DR  shift 88
-	TUN  shift 89
-	.  error
+	.  reduce 22 (src line 106)
 
-	lb_kind  goto 86
 
 state 69
-	virtual_server_stmt:  LB_KIND.lb_kind 
+	vrrp_instance_stmt:  STATE state_type.    (26)
 
-	NAT  shift 87
-	DR  shift 88
-	TUN  shift 89
-	.  error
+	.  reduce 26 (src line 113)
 
-	lb_kind  goto 90
 
 state 70
-	virtual_server_stmt:  PROTOCOL.TCP 
+	state_type:  MASTER.    (92)
 
-	TCP  shift 91
-	.  error
+	.  reduce 92 (src line 315)
 
 
 state 71
-	virtual_server_stmt:  SORRY_SERVER.IP NUMBER 
+	state_type:  BACKUP.    (93)
 
-	IP  shift 92
-	.  error
+	.  reduce 93 (src line 317)
 
 
 state 72
-	virtual_server_stmt:  REAL_SERVER.IP NUMBER '{' real_server_stmts '}' 
+	vrrp_instance_stmt:  INTERFACE IDENT.    (27)
 
-	IP  shift 93
-	.  error
+	.  reduce 27 (src line 118)
 
 
 state 73
-	vrrp_sync_group_stmt:  GROUP '{' exprs.'}' 
-	exprs:  exprs.expr 
+	vrrp_instance_stmt:  GARP_MASTER_DELAY NUMBER.    (28)
 
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
-	'}'  shift 94
-	.  error
+	.  reduce 28 (src line 122)
 
-	expr  goto 95
 
 state 74
-	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{' ipaddresses.'}' 
-	ipaddresses:  ipaddresses.ipaddress 
+	vrrp_instance_stmt:  VIRTUAL_ROUTER_ID NUMBER.    (30)
 
-	IP  shift 98
-	'}'  shift 96
-	.  error
+	.  reduce 30 (src line 130)
 
-	ipaddress  goto 97
 
 state 75
-	vrrp_instance_stmt:  AUTHENTICATION '{' auth_stmts.'}' 
-	auth_stmts:  auth_stmts.auth_stmt 
+	vrrp_instance_stmt:  PRIORITY NUMBER.    (31)
 
-	AUTH_TYPE  shift 101
-	AUTH_PASS  shift 102
-	'}'  shift 99
-	.  error
+	.  reduce 31 (src line 134)
 
-	auth_stmt  goto 100
 
 state 76
-	virtual_server_stmt:  DELAY_LOOP NUMBER.    (28)
+	vrrp_instance_stmt:  ADVERT_INT NUMBER.    (32)
 
-	.  reduce 28 (src line 136)
+	.  reduce 32 (src line 138)
 
 
 state 77
-	virtual_server_stmt:  LVS_SCHED lb_algo.    (29)
+	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{'.ipaddresses '}' 
+	ipaddresses: .    (82)
 
-	.  reduce 29 (src line 141)
+	.  reduce 82 (src line 295)
 
+	ipaddresses  goto 93
 
 state 78
-	lb_algo:  RR.    (36)
+	vrrp_instance_stmt:  AUTHENTICATION '{'.auth_stmts '}' 
+	auth_stmts: .    (86)
 
-	.  reduce 36 (src line 170)
+	.  reduce 86 (src line 303)
 
+	auth_stmts  goto 94
 
 state 79
-	lb_algo:  WRR.    (37)
+	ip_port:  IP NUMBER.    (96)
 
-	.  reduce 37 (src line 172)
+	.  reduce 96 (src line 323)
 
 
 state 80
-	lb_algo:  LC.    (38)
+	statement:  VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts '}'.    (7)
 
-	.  reduce 38 (src line 173)
+	.  reduce 7 (src line 80)
 
 
 state 81
-	lb_algo:  WLC.    (39)
+	virtual_server_stmts:  virtual_server_stmts virtual_server_stmt.    (36)
 
-	.  reduce 39 (src line 174)
+	.  reduce 36 (src line 153)
 
 
 state 82
-	lb_algo:  LBLC.    (40)
+	virtual_server_stmt:  DELAY_LOOP.NUMBER 
 
-	.  reduce 40 (src line 175)
+	NUMBER  shift 95
+	.  error
 
 
 state 83
-	lb_algo:  SH.    (41)
+	virtual_server_stmt:  LVS_SCHED.lb_algo 
 
-	.  reduce 41 (src line 176)
+	RR  shift 97
+	WRR  shift 98
+	LC  shift 99
+	WLC  shift 100
+	LBLC  shift 101
+	SH  shift 102
+	DH  shift 103
+	.  error
 
+	lb_algo  goto 96
 
 state 84
-	lb_algo:  DH.    (42)
+	virtual_server_stmt:  LB_ALGO.lb_algo 
 
-	.  reduce 42 (src line 177)
+	RR  shift 97
+	WRR  shift 98
+	LC  shift 99
+	WLC  shift 100
+	LBLC  shift 101
+	SH  shift 102
+	DH  shift 103
+	.  error
 
+	lb_algo  goto 104
 
 state 85
-	virtual_server_stmt:  LB_ALGO lb_algo.    (30)
+	virtual_server_stmt:  LVS_METHOD.lb_kind 
 
-	.  reduce 30 (src line 145)
+	NAT  shift 106
+	DR  shift 107
+	TUN  shift 108
+	.  error
 
+	lb_kind  goto 105
 
 state 86
-	virtual_server_stmt:  LVS_METHOD lb_kind.    (31)
+	virtual_server_stmt:  LB_KIND.lb_kind 
 
-	.  reduce 31 (src line 149)
+	NAT  shift 106
+	DR  shift 107
+	TUN  shift 108
+	.  error
 
+	lb_kind  goto 109
 
 state 87
-	lb_kind:  NAT.    (43)
+	virtual_server_stmt:  PROTOCOL.TCP 
 
-	.  reduce 43 (src line 179)
+	TCP  shift 110
+	.  error
 
 
 state 88
-	lb_kind:  DR.    (44)
+	virtual_server_stmt:  SORRY_SERVER.IP NUMBER 
 
-	.  reduce 44 (src line 181)
+	IP  shift 111
+	.  error
 
 
 state 89
-	lb_kind:  TUN.    (45)
+	virtual_server_stmt:  REAL_SERVER.IP NUMBER '{' real_server_stmts '}' 
 
-	.  reduce 45 (src line 182)
+	IP  shift 112
+	.  error
 
 
 state 90
-	virtual_server_stmt:  LB_KIND lb_kind.    (32)
+	global_defs_stmt:  NOTIFICATION_EMAIL '{' exprs '}'.    (10)
 
-	.  reduce 32 (src line 153)
+	.  reduce 10 (src line 89)
 
 
 state 91
-	virtual_server_stmt:  PROTOCOL TCP.    (33)
+	exprs:  exprs expr.    (98)
 
-	.  reduce 33 (src line 157)
+	.  reduce 98 (src line 328)
 
 
 state 92
-	virtual_server_stmt:  SORRY_SERVER IP.NUMBER 
+	vrrp_sync_group_stmt:  GROUP '{' exprs.'}' 
+	exprs:  exprs.expr 
 
-	NUMBER  shift 103
-	.  error
-
-
-state 93
-	virtual_server_stmt:  REAL_SERVER IP.NUMBER '{' real_server_stmts '}' 
-
-	NUMBER  shift 104
-	.  error
-
-
-state 94
-	vrrp_sync_group_stmt:  GROUP '{' exprs '}'.    (9)
-
-	.  reduce 9 (src line 82)
-
-
-state 95
-	exprs:  exprs expr.    (89)
-
-	.  reduce 89 (src line 309)
-
-
-state 96
-	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{' ipaddresses '}'.    (24)
-
-	.  reduce 24 (src line 123)
-
-
-state 97
-	ipaddresses:  ipaddresses ipaddress.    (74)
-
-	.  reduce 74 (src line 278)
-
-
-state 98
-	ipaddress:  IP.    (85)
-	ipaddress:  IP.DEV IDENT 
-
-	DEV  shift 105
-	.  reduce 85 (src line 300)
-
-
-state 99
-	vrrp_instance_stmt:  AUTHENTICATION '{' auth_stmts '}'.    (25)
-
-	.  reduce 25 (src line 127)
-
-
-state 100
-	auth_stmts:  auth_stmts auth_stmt.    (78)
-
-	.  reduce 78 (src line 286)
-
-
-state 101
-	auth_stmt:  AUTH_TYPE.auth_type 
-
-	PASS  shift 107
-	AH  shift 108
-	.  error
-
-	auth_type  goto 106
-
-state 102
-	auth_stmt:  AUTH_PASS.expr 
-
-	IDENT  shift 46
-	NUMBER  shift 45
-	IP  shift 48
-	STRING  shift 47
-	.  error
-
-	expr  goto 109
-
-state 103
-	virtual_server_stmt:  SORRY_SERVER IP NUMBER.    (34)
-
-	.  reduce 34 (src line 161)
-
-
-state 104
-	virtual_server_stmt:  REAL_SERVER IP NUMBER.'{' real_server_stmts '}' 
-
-	'{'  shift 110
-	.  error
-
-
-state 105
-	ipaddress:  IP DEV.IDENT 
-
-	IDENT  shift 111
-	.  error
-
-
-state 106
-	auth_stmt:  AUTH_TYPE auth_type.    (79)
-
-	.  reduce 79 (src line 288)
-
-
-state 107
-	auth_type:  PASS.    (81)
-
-	.  reduce 81 (src line 292)
-
-
-state 108
-	auth_type:  AH.    (82)
-
-	.  reduce 82 (src line 294)
-
-
-state 109
-	auth_stmt:  AUTH_PASS expr.    (80)
-
-	.  reduce 80 (src line 290)
-
-
-state 110
-	virtual_server_stmt:  REAL_SERVER IP NUMBER '{'.real_server_stmts '}' 
-	real_server_stmts: .    (46)
-
-	.  reduce 46 (src line 184)
-
-	real_server_stmts  goto 112
-
-state 111
-	ipaddress:  IP DEV IDENT.    (86)
-
-	.  reduce 86 (src line 302)
-
-
-state 112
-	virtual_server_stmt:  REAL_SERVER IP NUMBER '{' real_server_stmts.'}' 
-	real_server_stmts:  real_server_stmts.real_server_stmt 
-
-	WEIGHT  shift 115
-	INHIBIT_ON_FAILURE  shift 116
-	HTTP_GET  shift 117
-	SSL_GET  shift 118
-	TCP_CHECK  shift 119
-	MISC_CHECK  shift 120
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
 	'}'  shift 113
 	.  error
 
-	real_server_stmt  goto 114
+	expr  goto 91
 
-state 113
-	virtual_server_stmt:  REAL_SERVER IP NUMBER '{' real_server_stmts '}'.    (35)
+state 93
+	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{' ipaddresses.'}' 
+	ipaddresses:  ipaddresses.ipaddress 
 
-	.  reduce 35 (src line 165)
+	IP  shift 116
+	'}'  shift 114
+	.  error
+
+	ipaddress  goto 115
+
+state 94
+	vrrp_instance_stmt:  AUTHENTICATION '{' auth_stmts.'}' 
+	auth_stmts:  auth_stmts.auth_stmt 
+
+	AUTH_TYPE  shift 119
+	AUTH_PASS  shift 120
+	'}'  shift 117
+	.  error
+
+	auth_stmt  goto 118
+
+state 95
+	virtual_server_stmt:  DELAY_LOOP NUMBER.    (37)
+
+	.  reduce 37 (src line 155)
 
 
-state 114
-	real_server_stmts:  real_server_stmts real_server_stmt.    (47)
+state 96
+	virtual_server_stmt:  LVS_SCHED lb_algo.    (38)
 
-	.  reduce 47 (src line 186)
+	.  reduce 38 (src line 160)
 
 
-state 115
-	real_server_stmt:  WEIGHT.NUMBER 
+state 97
+	lb_algo:  RR.    (45)
+
+	.  reduce 45 (src line 189)
+
+
+state 98
+	lb_algo:  WRR.    (46)
+
+	.  reduce 46 (src line 191)
+
+
+state 99
+	lb_algo:  LC.    (47)
+
+	.  reduce 47 (src line 192)
+
+
+state 100
+	lb_algo:  WLC.    (48)
+
+	.  reduce 48 (src line 193)
+
+
+state 101
+	lb_algo:  LBLC.    (49)
+
+	.  reduce 49 (src line 194)
+
+
+state 102
+	lb_algo:  SH.    (50)
+
+	.  reduce 50 (src line 195)
+
+
+state 103
+	lb_algo:  DH.    (51)
+
+	.  reduce 51 (src line 196)
+
+
+state 104
+	virtual_server_stmt:  LB_ALGO lb_algo.    (39)
+
+	.  reduce 39 (src line 164)
+
+
+state 105
+	virtual_server_stmt:  LVS_METHOD lb_kind.    (40)
+
+	.  reduce 40 (src line 168)
+
+
+state 106
+	lb_kind:  NAT.    (52)
+
+	.  reduce 52 (src line 198)
+
+
+state 107
+	lb_kind:  DR.    (53)
+
+	.  reduce 53 (src line 200)
+
+
+state 108
+	lb_kind:  TUN.    (54)
+
+	.  reduce 54 (src line 201)
+
+
+state 109
+	virtual_server_stmt:  LB_KIND lb_kind.    (41)
+
+	.  reduce 41 (src line 172)
+
+
+state 110
+	virtual_server_stmt:  PROTOCOL TCP.    (42)
+
+	.  reduce 42 (src line 176)
+
+
+state 111
+	virtual_server_stmt:  SORRY_SERVER IP.NUMBER 
 
 	NUMBER  shift 121
 	.  error
 
 
-state 116
-	real_server_stmt:  INHIBIT_ON_FAILURE.    (49)
+state 112
+	virtual_server_stmt:  REAL_SERVER IP.NUMBER '{' real_server_stmts '}' 
 
-	.  reduce 49 (src line 193)
+	NUMBER  shift 122
+	.  error
+
+
+state 113
+	vrrp_sync_group_stmt:  GROUP '{' exprs '}'.    (18)
+
+	.  reduce 18 (src line 101)
+
+
+state 114
+	vrrp_instance_stmt:  VIRTUAL_IPADDRESS '{' ipaddresses '}'.    (33)
+
+	.  reduce 33 (src line 142)
+
+
+state 115
+	ipaddresses:  ipaddresses ipaddress.    (83)
+
+	.  reduce 83 (src line 297)
+
+
+state 116
+	ipaddress:  IP.    (94)
+	ipaddress:  IP.DEV IDENT 
+
+	DEV  shift 123
+	.  reduce 94 (src line 319)
 
 
 state 117
-	real_server_stmt:  HTTP_GET.'{' http_get_stmts '}' 
+	vrrp_instance_stmt:  AUTHENTICATION '{' auth_stmts '}'.    (34)
 
-	'{'  shift 122
-	.  error
+	.  reduce 34 (src line 146)
 
 
 state 118
-	real_server_stmt:  SSL_GET.'{' http_get_stmts '}' 
+	auth_stmts:  auth_stmts auth_stmt.    (87)
 
-	'{'  shift 123
-	.  error
+	.  reduce 87 (src line 305)
 
 
 state 119
-	real_server_stmt:  TCP_CHECK.'{' tcp_check_stmts '}' 
+	auth_stmt:  AUTH_TYPE.auth_type 
 
-	'{'  shift 124
+	PASS  shift 125
+	AH  shift 126
 	.  error
 
+	auth_type  goto 124
 
 state 120
-	real_server_stmt:  MISC_CHECK.'{' misc_check_stmts '}' 
+	auth_stmt:  AUTH_PASS.expr 
 
-	'{'  shift 125
+	IDENT  shift 34
+	NUMBER  shift 33
+	IP  shift 36
+	STRING  shift 35
 	.  error
 
+	expr  goto 127
 
 state 121
-	real_server_stmt:  WEIGHT NUMBER.    (48)
+	virtual_server_stmt:  SORRY_SERVER IP NUMBER.    (43)
 
-	.  reduce 48 (src line 188)
+	.  reduce 43 (src line 180)
 
 
 state 122
-	real_server_stmt:  HTTP_GET '{'.http_get_stmts '}' 
-	http_get_stmts: .    (54)
+	virtual_server_stmt:  REAL_SERVER IP NUMBER.'{' real_server_stmts '}' 
 
-	.  reduce 54 (src line 214)
+	'{'  shift 128
+	.  error
 
-	http_get_stmts  goto 126
 
 state 123
-	real_server_stmt:  SSL_GET '{'.http_get_stmts '}' 
-	http_get_stmts: .    (54)
+	ipaddress:  IP DEV.IDENT 
 
-	.  reduce 54 (src line 214)
+	IDENT  shift 129
+	.  error
 
-	http_get_stmts  goto 127
 
 state 124
-	real_server_stmt:  TCP_CHECK '{'.tcp_check_stmts '}' 
-	tcp_check_stmts: .    (61)
+	auth_stmt:  AUTH_TYPE auth_type.    (88)
 
-	.  reduce 61 (src line 240)
+	.  reduce 88 (src line 307)
 
-	tcp_check_stmts  goto 128
 
 state 125
-	real_server_stmt:  MISC_CHECK '{'.misc_check_stmts '}' 
-	misc_check_stmts: .    (65)
+	auth_type:  PASS.    (90)
 
-	.  reduce 65 (src line 254)
+	.  reduce 90 (src line 311)
 
-	misc_check_stmts  goto 129
 
 state 126
-	real_server_stmt:  HTTP_GET '{' http_get_stmts.'}' 
-	http_get_stmts:  http_get_stmts.http_get_stmt 
+	auth_type:  AH.    (91)
 
-	URL  shift 136
-	CONNECT_PORT  shift 132
-	CONNECT_TIMEOUT  shift 133
-	NB_GET_RETRY  shift 134
-	DELAY_BEFORE_RETRY  shift 135
-	'}'  shift 130
-	.  error
+	.  reduce 91 (src line 313)
 
-	http_get_stmt  goto 131
 
 state 127
-	real_server_stmt:  SSL_GET '{' http_get_stmts.'}' 
-	http_get_stmts:  http_get_stmts.http_get_stmt 
+	auth_stmt:  AUTH_PASS expr.    (89)
 
-	URL  shift 136
-	CONNECT_PORT  shift 132
-	CONNECT_TIMEOUT  shift 133
-	NB_GET_RETRY  shift 134
-	DELAY_BEFORE_RETRY  shift 135
-	'}'  shift 137
-	.  error
+	.  reduce 89 (src line 309)
 
-	http_get_stmt  goto 131
 
 state 128
-	real_server_stmt:  TCP_CHECK '{' tcp_check_stmts.'}' 
-	tcp_check_stmts:  tcp_check_stmts.tcp_check_stmt 
+	virtual_server_stmt:  REAL_SERVER IP NUMBER '{'.real_server_stmts '}' 
+	real_server_stmts: .    (55)
 
-	CONNECT_PORT  shift 140
-	CONNECT_TIMEOUT  shift 141
-	'}'  shift 138
-	.  error
+	.  reduce 55 (src line 203)
 
-	tcp_check_stmt  goto 139
+	real_server_stmts  goto 130
 
 state 129
-	real_server_stmt:  MISC_CHECK '{' misc_check_stmts.'}' 
-	misc_check_stmts:  misc_check_stmts.misc_check_stmt 
+	ipaddress:  IP DEV IDENT.    (95)
 
-	MISC_PATH  shift 144
-	MISC_TIMEOUT  shift 145
-	'}'  shift 142
-	.  error
+	.  reduce 95 (src line 321)
 
-	misc_check_stmt  goto 143
 
 state 130
-	real_server_stmt:  HTTP_GET '{' http_get_stmts '}'.    (50)
+	virtual_server_stmt:  REAL_SERVER IP NUMBER '{' real_server_stmts.'}' 
+	real_server_stmts:  real_server_stmts.real_server_stmt 
 
-	.  reduce 50 (src line 197)
+	WEIGHT  shift 133
+	INHIBIT_ON_FAILURE  shift 134
+	HTTP_GET  shift 135
+	SSL_GET  shift 136
+	TCP_CHECK  shift 137
+	MISC_CHECK  shift 138
+	'}'  shift 131
+	.  error
 
+	real_server_stmt  goto 132
 
 state 131
-	http_get_stmts:  http_get_stmts http_get_stmt.    (55)
+	virtual_server_stmt:  REAL_SERVER IP NUMBER '{' real_server_stmts '}'.    (44)
 
-	.  reduce 55 (src line 216)
+	.  reduce 44 (src line 184)
 
 
 state 132
-	http_get_stmt:  CONNECT_PORT.NUMBER 
+	real_server_stmts:  real_server_stmts real_server_stmt.    (56)
 
-	NUMBER  shift 146
-	.  error
+	.  reduce 56 (src line 205)
 
 
 state 133
-	http_get_stmt:  CONNECT_TIMEOUT.NUMBER 
+	real_server_stmt:  WEIGHT.NUMBER 
 
-	NUMBER  shift 147
+	NUMBER  shift 139
 	.  error
 
 
 state 134
-	http_get_stmt:  NB_GET_RETRY.NUMBER 
+	real_server_stmt:  INHIBIT_ON_FAILURE.    (58)
 
-	NUMBER  shift 148
-	.  error
+	.  reduce 58 (src line 212)
 
 
 state 135
-	http_get_stmt:  DELAY_BEFORE_RETRY.NUMBER 
+	real_server_stmt:  HTTP_GET.'{' http_get_stmts '}' 
 
-	NUMBER  shift 149
+	'{'  shift 140
 	.  error
 
 
 state 136
-	http_get_stmt:  URL.'{' url_stmts '}' 
+	real_server_stmt:  SSL_GET.'{' http_get_stmts '}' 
 
-	'{'  shift 150
+	'{'  shift 141
 	.  error
 
 
 state 137
-	real_server_stmt:  SSL_GET '{' http_get_stmts '}'.    (51)
+	real_server_stmt:  TCP_CHECK.'{' tcp_check_stmts '}' 
 
-	.  reduce 51 (src line 201)
+	'{'  shift 142
+	.  error
 
 
 state 138
-	real_server_stmt:  TCP_CHECK '{' tcp_check_stmts '}'.    (52)
+	real_server_stmt:  MISC_CHECK.'{' misc_check_stmts '}' 
 
-	.  reduce 52 (src line 205)
+	'{'  shift 143
+	.  error
 
 
 state 139
-	tcp_check_stmts:  tcp_check_stmts tcp_check_stmt.    (62)
+	real_server_stmt:  WEIGHT NUMBER.    (57)
 
-	.  reduce 62 (src line 242)
+	.  reduce 57 (src line 207)
 
 
 state 140
-	tcp_check_stmt:  CONNECT_PORT.NUMBER 
+	real_server_stmt:  HTTP_GET '{'.http_get_stmts '}' 
+	http_get_stmts: .    (63)
 
-	NUMBER  shift 151
-	.  error
+	.  reduce 63 (src line 233)
 
+	http_get_stmts  goto 144
 
 state 141
-	tcp_check_stmt:  CONNECT_TIMEOUT.NUMBER 
+	real_server_stmt:  SSL_GET '{'.http_get_stmts '}' 
+	http_get_stmts: .    (63)
 
-	NUMBER  shift 152
-	.  error
+	.  reduce 63 (src line 233)
 
+	http_get_stmts  goto 145
 
 state 142
-	real_server_stmt:  MISC_CHECK '{' misc_check_stmts '}'.    (53)
+	real_server_stmt:  TCP_CHECK '{'.tcp_check_stmts '}' 
+	tcp_check_stmts: .    (70)
 
-	.  reduce 53 (src line 209)
+	.  reduce 70 (src line 259)
 
+	tcp_check_stmts  goto 146
 
 state 143
-	misc_check_stmts:  misc_check_stmts misc_check_stmt.    (66)
+	real_server_stmt:  MISC_CHECK '{'.misc_check_stmts '}' 
+	misc_check_stmts: .    (74)
 
-	.  reduce 66 (src line 256)
+	.  reduce 74 (src line 273)
 
+	misc_check_stmts  goto 147
 
 state 144
-	misc_check_stmt:  MISC_PATH.STRING 
+	real_server_stmt:  HTTP_GET '{' http_get_stmts.'}' 
+	http_get_stmts:  http_get_stmts.http_get_stmt 
 
-	STRING  shift 153
+	URL  shift 154
+	CONNECT_PORT  shift 150
+	CONNECT_TIMEOUT  shift 151
+	NB_GET_RETRY  shift 152
+	DELAY_BEFORE_RETRY  shift 153
+	'}'  shift 148
 	.  error
 
+	http_get_stmt  goto 149
 
 state 145
-	misc_check_stmt:  MISC_TIMEOUT.NUMBER 
+	real_server_stmt:  SSL_GET '{' http_get_stmts.'}' 
+	http_get_stmts:  http_get_stmts.http_get_stmt 
 
-	NUMBER  shift 154
+	URL  shift 154
+	CONNECT_PORT  shift 150
+	CONNECT_TIMEOUT  shift 151
+	NB_GET_RETRY  shift 152
+	DELAY_BEFORE_RETRY  shift 153
+	'}'  shift 155
 	.  error
 
+	http_get_stmt  goto 149
 
 state 146
-	http_get_stmt:  CONNECT_PORT NUMBER.    (56)
+	real_server_stmt:  TCP_CHECK '{' tcp_check_stmts.'}' 
+	tcp_check_stmts:  tcp_check_stmts.tcp_check_stmt 
 
-	.  reduce 56 (src line 218)
-
-
-state 147
-	http_get_stmt:  CONNECT_TIMEOUT NUMBER.    (57)
-
-	.  reduce 57 (src line 223)
-
-
-state 148
-	http_get_stmt:  NB_GET_RETRY NUMBER.    (58)
-
-	.  reduce 58 (src line 227)
-
-
-state 149
-	http_get_stmt:  DELAY_BEFORE_RETRY NUMBER.    (59)
-
-	.  reduce 59 (src line 231)
-
-
-state 150
-	http_get_stmt:  URL '{'.url_stmts '}' 
-	url_stmts: .    (69)
-
-	.  reduce 69 (src line 268)
-
-	url_stmts  goto 155
-
-state 151
-	tcp_check_stmt:  CONNECT_PORT NUMBER.    (63)
-
-	.  reduce 63 (src line 244)
-
-
-state 152
-	tcp_check_stmt:  CONNECT_TIMEOUT NUMBER.    (64)
-
-	.  reduce 64 (src line 249)
-
-
-state 153
-	misc_check_stmt:  MISC_PATH STRING.    (67)
-
-	.  reduce 67 (src line 258)
-
-
-state 154
-	misc_check_stmt:  MISC_TIMEOUT NUMBER.    (68)
-
-	.  reduce 68 (src line 263)
-
-
-state 155
-	http_get_stmt:  URL '{' url_stmts.'}' 
-	url_stmts:  url_stmts.url_stmt 
-
-	PATH  shift 158
-	STATUS_CODE  shift 159
+	CONNECT_PORT  shift 158
+	CONNECT_TIMEOUT  shift 159
 	'}'  shift 156
 	.  error
 
-	url_stmt  goto 157
+	tcp_check_stmt  goto 157
+
+state 147
+	real_server_stmt:  MISC_CHECK '{' misc_check_stmts.'}' 
+	misc_check_stmts:  misc_check_stmts.misc_check_stmt 
+
+	MISC_PATH  shift 162
+	MISC_TIMEOUT  shift 163
+	'}'  shift 160
+	.  error
+
+	misc_check_stmt  goto 161
+
+state 148
+	real_server_stmt:  HTTP_GET '{' http_get_stmts '}'.    (59)
+
+	.  reduce 59 (src line 216)
+
+
+state 149
+	http_get_stmts:  http_get_stmts http_get_stmt.    (64)
+
+	.  reduce 64 (src line 235)
+
+
+state 150
+	http_get_stmt:  CONNECT_PORT.NUMBER 
+
+	NUMBER  shift 164
+	.  error
+
+
+state 151
+	http_get_stmt:  CONNECT_TIMEOUT.NUMBER 
+
+	NUMBER  shift 165
+	.  error
+
+
+state 152
+	http_get_stmt:  NB_GET_RETRY.NUMBER 
+
+	NUMBER  shift 166
+	.  error
+
+
+state 153
+	http_get_stmt:  DELAY_BEFORE_RETRY.NUMBER 
+
+	NUMBER  shift 167
+	.  error
+
+
+state 154
+	http_get_stmt:  URL.'{' url_stmts '}' 
+
+	'{'  shift 168
+	.  error
+
+
+state 155
+	real_server_stmt:  SSL_GET '{' http_get_stmts '}'.    (60)
+
+	.  reduce 60 (src line 220)
+
 
 state 156
-	http_get_stmt:  URL '{' url_stmts '}'.    (60)
+	real_server_stmt:  TCP_CHECK '{' tcp_check_stmts '}'.    (61)
 
-	.  reduce 60 (src line 235)
+	.  reduce 61 (src line 224)
 
 
 state 157
-	url_stmts:  url_stmts url_stmt.    (70)
+	tcp_check_stmts:  tcp_check_stmts tcp_check_stmt.    (71)
 
-	.  reduce 70 (src line 270)
+	.  reduce 71 (src line 261)
 
 
 state 158
-	url_stmt:  PATH.IDENT 
+	tcp_check_stmt:  CONNECT_PORT.NUMBER 
 
-	IDENT  shift 160
+	NUMBER  shift 169
 	.  error
 
 
 state 159
-	url_stmt:  STATUS_CODE.NUMBER 
+	tcp_check_stmt:  CONNECT_TIMEOUT.NUMBER 
 
-	NUMBER  shift 161
+	NUMBER  shift 170
 	.  error
 
 
 state 160
-	url_stmt:  PATH IDENT.    (71)
+	real_server_stmt:  MISC_CHECK '{' misc_check_stmts '}'.    (62)
 
-	.  reduce 71 (src line 272)
+	.  reduce 62 (src line 228)
 
 
 state 161
-	url_stmt:  STATUS_CODE NUMBER.    (72)
+	misc_check_stmts:  misc_check_stmts misc_check_stmt.    (75)
 
-	.  reduce 72 (src line 274)
+	.  reduce 75 (src line 275)
 
 
-68 terminals, 31 nonterminals
-94 grammar rules, 162/2000 states
+state 162
+	misc_check_stmt:  MISC_PATH.STRING 
+
+	STRING  shift 171
+	.  error
+
+
+state 163
+	misc_check_stmt:  MISC_TIMEOUT.NUMBER 
+
+	NUMBER  shift 172
+	.  error
+
+
+state 164
+	http_get_stmt:  CONNECT_PORT NUMBER.    (65)
+
+	.  reduce 65 (src line 237)
+
+
+state 165
+	http_get_stmt:  CONNECT_TIMEOUT NUMBER.    (66)
+
+	.  reduce 66 (src line 242)
+
+
+state 166
+	http_get_stmt:  NB_GET_RETRY NUMBER.    (67)
+
+	.  reduce 67 (src line 246)
+
+
+state 167
+	http_get_stmt:  DELAY_BEFORE_RETRY NUMBER.    (68)
+
+	.  reduce 68 (src line 250)
+
+
+state 168
+	http_get_stmt:  URL '{'.url_stmts '}' 
+	url_stmts: .    (78)
+
+	.  reduce 78 (src line 287)
+
+	url_stmts  goto 173
+
+state 169
+	tcp_check_stmt:  CONNECT_PORT NUMBER.    (72)
+
+	.  reduce 72 (src line 263)
+
+
+state 170
+	tcp_check_stmt:  CONNECT_TIMEOUT NUMBER.    (73)
+
+	.  reduce 73 (src line 268)
+
+
+state 171
+	misc_check_stmt:  MISC_PATH STRING.    (76)
+
+	.  reduce 76 (src line 277)
+
+
+state 172
+	misc_check_stmt:  MISC_TIMEOUT NUMBER.    (77)
+
+	.  reduce 77 (src line 282)
+
+
+state 173
+	http_get_stmt:  URL '{' url_stmts.'}' 
+	url_stmts:  url_stmts.url_stmt 
+
+	PATH  shift 176
+	STATUS_CODE  shift 177
+	'}'  shift 174
+	.  error
+
+	url_stmt  goto 175
+
+state 174
+	http_get_stmt:  URL '{' url_stmts '}'.    (69)
+
+	.  reduce 69 (src line 254)
+
+
+state 175
+	url_stmts:  url_stmts url_stmt.    (79)
+
+	.  reduce 79 (src line 289)
+
+
+state 176
+	url_stmt:  PATH.IDENT 
+
+	IDENT  shift 178
+	.  error
+
+
+state 177
+	url_stmt:  STATUS_CODE.NUMBER 
+
+	NUMBER  shift 179
+	.  error
+
+
+state 178
+	url_stmt:  PATH IDENT.    (80)
+
+	.  reduce 80 (src line 291)
+
+
+state 179
+	url_stmt:  STATUS_CODE NUMBER.    (81)
+
+	.  reduce 81 (src line 293)
+
+
+75 terminals, 33 nonterminals
+103 grammar rules, 180/2000 states
 0 shift/reduce, 0 reduce/reduce conflicts reported
-80 working sets used
-memory: parser 39/30000
+82 working sets used
+memory: parser 45/30000
 4 extra closures
-161 shift entries, 1 exceptions
-39 goto entries
-2 entries saved by goto default
-Optimizer space used: output 170/30000
-170 table entries, 0 zero
-maximum spread: 68, maximum offset: 123
+190 shift entries, 1 exceptions
+45 goto entries
+3 entries saved by goto default
+Optimizer space used: output 192/30000
+192 table entries, 0 zero
+maximum spread: 75, maximum offset: 141

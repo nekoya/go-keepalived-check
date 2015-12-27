@@ -10,12 +10,15 @@ package keepalived
     tok        Token
 }
 
-%type<statements> statements vrrp_sync_group_stmts vrrp_instance_stmts auth_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
-%type<statement> statement vrrp_sync_group_stmt vrrp_instance_stmt auth_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
+%type<statements> statements global_defs_stmts vrrp_sync_group_stmts vrrp_instance_stmts auth_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
+%type<statement> statement global_defs_stmt vrrp_sync_group_stmt vrrp_instance_stmt auth_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
 %type<exprs> exprs ipaddresses ip_ports
 %type<expr> expr state_type auth_type ipaddress ip_port lb_algo lb_kind
 
 %token<tok> IDENT NUMBER IP STRING
+
+%token<tok> GLOBAL_DEFS
+%token<tok> NOTIFICATION_EMAIL NOTIFICATION_EMAIL_FROM SMTP_SERVER SMTP_CONNECT_TIMEOUT ROUTER_ID ENABLE_TRAPS
 
 %token<tok> VRRP_SYNC_GROUP GROUP
 %token<tok> NOTIFY_MASTER NOTIFY_BACKUP NOTIFY_FAULT NOTIFY SMTP_ALERT
@@ -58,7 +61,11 @@ statements
         }
     }
 statement
-    : VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts '}'
+    : GLOBAL_DEFS '{' global_defs_stmts '}'
+    {
+        $$ = &GlobalDefsStmt{stmts: $3}
+    }
+    | VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts '}'
     {
         $$ = &VrrpSyncGroupStmt{group:$2.lit, stmts: $4}
     }
@@ -74,6 +81,18 @@ statement
     {
         $$ = &VirtualServerStmt{group:$3.lit, stmts: $5}
     }
+
+global_defs_stmts
+    : { $$ = []Statement{} }
+    | global_defs_stmts global_defs_stmt { $$ = append($1, $2) }
+
+global_defs_stmt
+    : NOTIFICATION_EMAIL '{' exprs '}' { $$ = &GroupStmt{exprs: $3} }
+    | NOTIFICATION_EMAIL_FROM expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | SMTP_SERVER expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | SMTP_CONNECT_TIMEOUT NUMBER { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &NumExpr{lit: $2.lit}} }
+    | ROUTER_ID expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | ENABLE_TRAPS { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}} }
 
 vrrp_sync_group_stmts
     : { $$ = []Statement{} }

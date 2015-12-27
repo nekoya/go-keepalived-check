@@ -11,6 +11,15 @@ const (
 )
 
 var keywords = map[string]int{
+	// global_defs
+	"global_defs":             GLOBAL_DEFS,
+	"notification_email":      NOTIFICATION_EMAIL,
+	"notification_email_from": NOTIFICATION_EMAIL_FROM,
+	"smtp_server":             SMTP_SERVER,
+	"smtp_connect_timeout":    SMTP_CONNECT_TIMEOUT,
+	"router_id":               ROUTER_ID,
+	"enable_traps":            ENABLE_TRAPS,
+
 	// authentication
 	"authentication": AUTHENTICATION,
 	"auth_type":      AUTH_TYPE,
@@ -150,7 +159,7 @@ retry:
 // ========================================
 
 func isLetter(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.' || ch == '/'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.' || ch == '/' || ch == '@'
 }
 
 func isDigit(ch rune) bool {
