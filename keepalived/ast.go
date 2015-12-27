@@ -43,6 +43,8 @@ type VirtualServerGroupStmt struct {
 
 type VirtualServerStmt struct {
 	group string
+	ip    *IdentExpr
+	port  *NumExpr
 	stmts []Statement
 }
 

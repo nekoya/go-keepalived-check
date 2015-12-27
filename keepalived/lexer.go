@@ -48,6 +48,7 @@ var keywords = map[string]int{
 	"virtual_router_id": VIRTUAL_ROUTER_ID,
 	"priority":          PRIORITY,
 	"advert_int":        ADVERT_INT,
+	"nopreempt":         NOPREEMPT,
 	"virtual_ipaddress": VIRTUAL_IPADDRESS,
 	"dev":               DEV,
 
@@ -55,9 +56,11 @@ var keywords = map[string]int{
 	"virtual_server_group": VIRTUAL_SERVER_GROUP,
 
 	// virtual_server
-	"virtual_server": VIRTUAL_SERVER,
-	"delay_loop":     DELAY_LOOP,
-	"sorry_server":   SORRY_SERVER,
+	"virtual_server":          VIRTUAL_SERVER,
+	"delay_loop":              DELAY_LOOP,
+	"sorry_server":            SORRY_SERVER,
+	"persistence_timeout":     PERSISTENCE_TIMEOUT,
+	"persistence_granularity": PERSISTENCE_GRANULARITY,
 	// LVS scheduler
 	"lvs_sched": LVS_SCHED,
 	"lb_algo":   LB_ALGO,
@@ -85,6 +88,7 @@ var keywords = map[string]int{
 	"SSL_GET":            SSL_GET,
 	"url":                URL,
 	"path":               PATH,
+	"digest":             DIGEST,
 	"status_code":        STATUS_CODE,
 	"connect_port":       CONNECT_PORT,
 	"connect_timeout":    CONNECT_TIMEOUT,

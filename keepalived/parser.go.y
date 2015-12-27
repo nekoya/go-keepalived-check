@@ -25,7 +25,7 @@ package keepalived
 
 %token<tok> VRRP_INSTANCE
 %token<tok> STATE MASTER BACKUP
-%token<tok> INTERFACE GARP_MASTER_DELAY VIRTUAL_ROUTER_ID PRIORITY ADVERT_INT
+%token<tok> INTERFACE GARP_MASTER_DELAY VIRTUAL_ROUTER_ID PRIORITY ADVERT_INT NOPREEMPT
 %token<tok> AUTHENTICATION AUTH_TYPE AUTH_PASS PASS AH
 %token<tok> VIRTUAL_IPADDRESS DEV
 
@@ -33,13 +33,14 @@ package keepalived
 %token<tok> DELAY_LOOP SORRY_SERVER
 %token<tok> LVS_SCHED LB_ALGO RR WRR LC WLC LBLC SH DH
 %token<tok> LVS_METHOD LB_KIND NAT DR TUN
+%token<tok> PERSISTENCE_TIMEOUT PERSISTENCE_GRANULARITY
 %token<tok> PROTOCOL TCP
 
 %token<tok> REAL_SERVER
 %token<tok> WEIGHT
 %token<tok> INHIBIT_ON_FAILURE
 %token<tok> HTTP_GET SSL_GET TCP_CHECK MISC_CHECK
-%token<tok> URL PATH STATUS_CODE 
+%token<tok> URL PATH DIGEST STATUS_CODE
 %token<tok> CONNECT_PORT CONNECT_TIMEOUT NB_GET_RETRY DELAY_BEFORE_RETRY
 %token<tok> MISC_PATH MISC_TIMEOUT
 
@@ -80,6 +81,10 @@ statement
     | VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts '}'
     {
         $$ = &VirtualServerStmt{group:$3.lit, stmts: $5}
+    }
+    | VIRTUAL_SERVER IP NUMBER '{' virtual_server_stmts '}'
+    {
+        $$ = &VirtualServerStmt{ip: &IdentExpr{lit: $2.lit}, port: &NumExpr{lit: $3.lit}, stmts: $5}
     }
 
 global_defs_stmts
@@ -122,6 +127,10 @@ vrrp_instance_stmt
     | GARP_MASTER_DELAY NUMBER
     {
         $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &NumExpr{lit: $2.lit}}
+    }
+    | NOPREEMPT
+    {
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}}
     }
     | SMTP_ALERT
     {
@@ -172,6 +181,14 @@ virtual_server_stmt
     | LB_KIND lb_kind
     {
         $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2}
+    }
+    | PERSISTENCE_TIMEOUT NUMBER
+    {
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &NumExpr{lit: $2.lit}}
+    }
+    | PERSISTENCE_GRANULARITY IDENT
+    {
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}}
     }
     | PROTOCOL TCP
     {
@@ -289,7 +306,8 @@ url_stmts
     | url_stmts url_stmt { $$ = append($1, $2) }
 
 url_stmt
-    : PATH IDENT { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}} }
+    : PATH   IDENT { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}} }
+    | DIGEST IDENT { $$ = &ExprStmt{key: &IdentExpr{$1.lit}, value: &NumExpr{lit: $2.lit}} }
     | STATUS_CODE NUMBER { $$ = &ExprStmt{key: &IdentExpr{$1.lit}, value: &NumExpr{lit: $2.lit}} }
 
 ipaddresses
