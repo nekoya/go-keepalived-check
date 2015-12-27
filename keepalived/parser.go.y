@@ -10,20 +10,23 @@ package keepalived
     tok        Token
 }
 
-%type<statements> statements vrrp_instance_stmts auth_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
-%type<statement> statement vrrp_instance_stmt auth_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
-%type<exprs> ipaddresses ip_ports
+%type<statements> statements vrrp_sync_group_stmts vrrp_instance_stmts auth_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
+%type<statement> statement vrrp_sync_group_stmt vrrp_instance_stmt auth_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
+%type<exprs> exprs ipaddresses ip_ports
 %type<expr> expr state_type auth_type ipaddress ip_port lb_algo lb_kind
 
 %token<tok> IDENT NUMBER IP STRING
 
+%token<tok> VRRP_SYNC_GROUP GROUP
+%token<tok> NOTIFY_MASTER NOTIFY_BACKUP NOTIFY_FAULT NOTIFY SMTP_ALERT
+
 %token<tok> VRRP_INSTANCE
 %token<tok> STATE MASTER BACKUP
-%token<tok> INTERFACE GARP_MASTER_DELAY SMTP_ALERT VIRTUAL_ROUTER_ID PRIORITY ADVERT_INT
+%token<tok> INTERFACE GARP_MASTER_DELAY VIRTUAL_ROUTER_ID PRIORITY ADVERT_INT
 %token<tok> AUTHENTICATION AUTH_TYPE AUTH_PASS PASS AH
 %token<tok> VIRTUAL_IPADDRESS DEV
 
-%token<tok> VIRTUAL_SERVER_GROUP VIRTUAL_SERVER GROUP
+%token<tok> VIRTUAL_SERVER_GROUP VIRTUAL_SERVER
 %token<tok> DELAY_LOOP SORRY_SERVER
 %token<tok> LVS_SCHED LB_ALGO RR WRR LC WLC LBLC SH DH
 %token<tok> LVS_METHOD LB_KIND NAT DR TUN
@@ -53,9 +56,13 @@ statements
         if l, ok := yylex.(*Lexer); ok {
             l.statements = $$
         }
-    } 
+    }
 statement
-    : VRRP_INSTANCE IDENT '{' vrrp_instance_stmts '}'
+    : VRRP_SYNC_GROUP IDENT '{' vrrp_sync_group_stmts '}'
+    {
+        $$ = &VrrpSyncGroupStmt{group:$2.lit, stmts: $4}
+    }
+    | VRRP_INSTANCE IDENT '{' vrrp_instance_stmts '}'
     {
         $$ = &VrrpInstanceStmt{inside_network:$2.lit, stmts: $4}
     }
@@ -67,6 +74,18 @@ statement
     {
         $$ = &VirtualServerStmt{group:$3.lit, stmts: $5}
     }
+
+vrrp_sync_group_stmts
+    : { $$ = []Statement{} }
+    | vrrp_sync_group_stmts vrrp_sync_group_stmt { $$ = append($1, $2) }
+
+vrrp_sync_group_stmt
+    : GROUP '{' exprs '}' { $$ = &GroupStmt{exprs: $3} }
+    | NOTIFY_MASTER expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | NOTIFY_BACKUP expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | NOTIFY_FAULT  expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | NOTIFY        expr { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2} }
+    | SMTP_ALERT { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}} }
 
 vrrp_instance_stmts
     : { $$ = []Statement{} }
@@ -285,9 +304,14 @@ ipaddress
 ip_port
     : IP NUMBER { $$ = &IpExpr{lit: $1.lit, port: &NumExpr{lit: $2.lit}} }
 
+exprs
+    : { $$ = []Expression{} }
+    | exprs expr { $$ = append($1, $2) }
+
 expr
     : NUMBER { $$ = &NumExpr{lit: $1.lit} }
     | IDENT { $$ = &IdentExpr{lit: $1.lit} }
     | STRING { $$ = &StringExpr{lit: $1.lit} }
+    | IP { $$ = &IpExpr{lit: $1.lit} }
 
 %%

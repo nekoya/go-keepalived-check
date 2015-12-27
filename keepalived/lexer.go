@@ -23,11 +23,19 @@ var keywords = map[string]int{
 	"MASTER": MASTER,
 	"BACKUP": BACKUP,
 
+	// vrrp_sync_group
+	"vrrp_sync_group": VRRP_SYNC_GROUP,
+	"group":           GROUP,
+	"notify_master":   NOTIFY_MASTER,
+	"notify_backup":   NOTIFY_BACKUP,
+	"notify_fault":    NOTIFY_FAULT,
+	"notify":          NOTIFY,
+	"smtp_alert":      SMTP_ALERT,
+
 	// vrrp_instance
 	"vrrp_instance":     VRRP_INSTANCE,
 	"interface":         INTERFACE,
 	"garp_master_delay": GARP_MASTER_DELAY,
-	"smtp_alert":        SMTP_ALERT,
 	"virtual_router_id": VIRTUAL_ROUTER_ID,
 	"priority":          PRIORITY,
 	"advert_int":        ADVERT_INT,
@@ -39,7 +47,6 @@ var keywords = map[string]int{
 
 	// virtual_server
 	"virtual_server": VIRTUAL_SERVER,
-	"group":          GROUP,
 	"delay_loop":     DELAY_LOOP,
 	"sorry_server":   SORRY_SERVER,
 	// LVS scheduler

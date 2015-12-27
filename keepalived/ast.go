@@ -18,6 +18,11 @@ type ExprStmt struct {
 	value Expression
 }
 
+type VrrpSyncGroupStmt struct {
+	group string
+	stmts []Statement
+}
+
 type VrrpInstanceStmt struct {
 	inside_network string
 	stmts          []Statement
@@ -78,6 +83,19 @@ type AuthTypeStmt struct {
 
 type AuthPassStmt struct {
 	expr Expression
+}
+
+type GroupStmt struct {
+	exprs []Expression
+}
+
+func (x *VrrpSyncGroupStmt) String() string {
+	var ret []string
+	ret = append(ret, "vrrp_sync_group "+x.group)
+	for _, v := range x.stmts {
+		ret = append(ret, "- "+v.String())
+	}
+	return strings.Join(ret[:], "\n")
 }
 
 func (x *VrrpInstanceStmt) String() string {
@@ -172,6 +190,15 @@ func (x *UrlStmt) String() string {
 		ret = append(ret, "- "+v.String())
 	}
 	return strings.Join(ret[:], "\n")
+}
+
+func (x *GroupStmt) String() string {
+	var ret []string
+	ret = append(ret, "group")
+	for _, v := range x.exprs {
+		ret = append(ret, v.expr())
+	}
+	return strings.Join(ret[:], " - ")
 }
 
 func (x *ExprStmt) String() string {
