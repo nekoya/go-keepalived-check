@@ -10,10 +10,10 @@ package keepalived
     tok        Token
 }
 
-%type<statements> statements global_defs_stmts vrrp_sync_group_stmts vrrp_instance_stmts auth_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
-%type<statement> statement global_defs_stmt vrrp_sync_group_stmt vrrp_instance_stmt auth_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
-%type<exprs> exprs ipaddresses ip_ports
-%type<expr> expr state_type auth_type ipaddress ip_port lb_algo lb_kind
+%type<statements> statements global_defs_stmts vrrp_sync_group_stmts vrrp_instance_stmts auth_stmts virtual_server_group_stmts virtual_server_stmts real_server_stmts http_get_stmts url_stmts tcp_check_stmts misc_check_stmts
+%type<statement> statement global_defs_stmt vrrp_sync_group_stmt vrrp_instance_stmt auth_stmt virtual_server_group_stmt virtual_server_stmt real_server_stmt http_get_stmt url_stmt tcp_check_stmt misc_check_stmt
+%type<exprs> exprs ipaddresses
+%type<expr> expr state_type auth_type ipaddress ip_port protocol lb_algo lb_kind
 
 %token<tok> IDENT NUMBER IP STRING
 
@@ -29,12 +29,15 @@ package keepalived
 %token<tok> AUTHENTICATION AUTH_TYPE AUTH_PASS PASS AH
 %token<tok> VIRTUAL_IPADDRESS DEV
 
-%token<tok> VIRTUAL_SERVER_GROUP VIRTUAL_SERVER
-%token<tok> DELAY_LOOP SORRY_SERVER
+%token<tok> VIRTUAL_SERVER_GROUP
+%token<tok> FWMARK
+
+%token<tok> VIRTUAL_SERVER
+%token<tok> DELAY_LOOP NAT_MASK SORRY_SERVER
 %token<tok> LVS_SCHED LB_ALGO RR WRR LC WLC LBLC SH DH
 %token<tok> LVS_METHOD LB_KIND NAT DR TUN
 %token<tok> PERSISTENCE_TIMEOUT PERSISTENCE_GRANULARITY
-%token<tok> PROTOCOL TCP
+%token<tok> PROTOCOL TCP UDP
 
 %token<tok> REAL_SERVER
 %token<tok> WEIGHT
@@ -42,7 +45,7 @@ package keepalived
 %token<tok> HTTP_GET SSL_GET TCP_CHECK MISC_CHECK
 %token<tok> URL PATH DIGEST STATUS_CODE
 %token<tok> CONNECT_PORT CONNECT_TIMEOUT NB_GET_RETRY DELAY_BEFORE_RETRY
-%token<tok> MISC_PATH MISC_TIMEOUT
+%token<tok> MISC_PATH MISC_TIMEOUT MISC_DYNAMIC
 
 %%
 
@@ -74,9 +77,9 @@ statement
     {
         $$ = &VrrpInstanceStmt{inside_network:$2.lit, stmts: $4}
     }
-    | VIRTUAL_SERVER_GROUP IDENT '{' ip_ports '}'
+    | VIRTUAL_SERVER_GROUP IDENT '{' virtual_server_group_stmts '}'
     {
-        $$ = &VirtualServerGroupStmt{group:$2.lit, vips: $4}
+        $$ = &VirtualServerGroupStmt{group:$2.lit, stmts: $4}
     }
     | VIRTUAL_SERVER GROUP IDENT '{' virtual_server_stmts '}'
     {
@@ -85,6 +88,10 @@ statement
     | VIRTUAL_SERVER IP NUMBER '{' virtual_server_stmts '}'
     {
         $$ = &VirtualServerStmt{ip: &IdentExpr{lit: $2.lit}, port: &NumExpr{lit: $3.lit}, stmts: $5}
+    }
+    | VIRTUAL_SERVER FWMARK NUMBER '{' virtual_server_stmts '}'
+    {
+        $$ = &VirtualServerStmt{fwmark: &NumExpr{lit: $3.lit}, stmts: $5}
     }
 
 global_defs_stmts
@@ -157,6 +164,14 @@ vrrp_instance_stmt
         $$ = &AuthenticationStmt{stmts: $3}
     }
 
+virtual_server_group_stmts
+    : { $$ = []Statement{} }
+    | virtual_server_group_stmts virtual_server_group_stmt { $$ = append($1, $2) }
+
+virtual_server_group_stmt
+    : ip_port       { $$ = &ExprStmt{key: $1} }
+    | FWMARK NUMBER { $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &NumExpr{lit: $2.lit}} }
+
 virtual_server_stmts
     : { $$ = []Statement{} }
     | virtual_server_stmts virtual_server_stmt { $$ = append($1, $2) }
@@ -190,9 +205,13 @@ virtual_server_stmt
     {
         $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}}
     }
-    | PROTOCOL TCP
+    | PROTOCOL protocol
     {
-        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}}
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2}
+    }
+    | NAT_MASK expr
+    {
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2}
     }
     | SORRY_SERVER IP NUMBER
     {
@@ -202,6 +221,10 @@ virtual_server_stmt
     {
         $$ = &RealServerStmt{ip: &IdentExpr{lit: $2.lit}, port: &NumExpr{lit: $3.lit}, stmts: $5}
     }
+
+protocol
+    : TCP { $$ = &IdentExpr{lit: $1.lit} }
+    | UDP { $$ = &IdentExpr{lit: $1.lit} }
 
 lb_algo
     : RR   { $$ = &IdentExpr{lit: $1.lit} }
@@ -292,13 +315,17 @@ misc_check_stmts
     | misc_check_stmts misc_check_stmt { $$ = append($1, $2) }
 
 misc_check_stmt
-    : MISC_PATH STRING
+    : MISC_PATH expr
     {
-        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &StringExpr{lit: $2.lit}}
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: $2}
     }
     | MISC_TIMEOUT NUMBER
     {
         $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &NumExpr{lit: $2.lit}}
+    }
+    | MISC_DYNAMIC
+    {
+        $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}}
     }
 
 url_stmts
@@ -313,10 +340,6 @@ url_stmt
 ipaddresses
     : { $$ = []Expression{} }
     | ipaddresses ipaddress { $$ = append($1, $2) }
-
-ip_ports
-    : { $$ = []Expression{} }
-    | ip_ports ip_port { $$ = append($1, $2) }
 
 auth_stmts
     : { $$ = []Statement{} }

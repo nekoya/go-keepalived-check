@@ -54,10 +54,12 @@ var keywords = map[string]int{
 
 	// virtual_server_group
 	"virtual_server_group": VIRTUAL_SERVER_GROUP,
+	"fwmark":               FWMARK,
 
 	// virtual_server
 	"virtual_server":          VIRTUAL_SERVER,
 	"delay_loop":              DELAY_LOOP,
+	"nat_mask":                NAT_MASK,
 	"sorry_server":            SORRY_SERVER,
 	"persistence_timeout":     PERSISTENCE_TIMEOUT,
 	"persistence_granularity": PERSISTENCE_GRANULARITY,
@@ -79,6 +81,7 @@ var keywords = map[string]int{
 	"TUN":        TUN,
 	"protocol":   PROTOCOL,
 	"TCP":        TCP,
+	"UDP":        UDP,
 	// real_server
 	"real_server":        REAL_SERVER,
 	"weight":             WEIGHT,
@@ -100,6 +103,7 @@ var keywords = map[string]int{
 	"MISC_CHECK":   MISC_CHECK,
 	"misc_path":    MISC_PATH,
 	"misc_timeout": MISC_TIMEOUT,
+	"misc_dynamic": MISC_DYNAMIC,
 }
 
 type Position struct {
@@ -134,7 +138,7 @@ retry:
 		lit = s.scanIdentifier()
 		if matched, _ := regexp.MatchString("^[0-9]+$", lit); matched {
 			tok = NUMBER
-		} else if matched, _ := regexp.MatchString("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}(|/[0-9]{1,2})$", lit); matched {
+		} else if matched, _ := regexp.MatchString("^[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}(|\\-[0-9]{1,3}|/[0-9]{1,2})$", lit); matched {
 			tok = IP
 		} else {
 			tok = IDENT
@@ -163,7 +167,7 @@ retry:
 // ========================================
 
 func isLetter(ch rune) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.' || ch == '/' || ch == '@'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_' || ch == '.' || ch == '/' || ch == '@' || ch == '-'
 }
 
 func isDigit(ch rune) bool {

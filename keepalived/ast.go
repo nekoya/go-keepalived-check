@@ -38,14 +38,15 @@ type VirtualIpaddressStmt struct {
 
 type VirtualServerGroupStmt struct {
 	group string
-	vips  []Expression
+	stmts []Statement
 }
 
 type VirtualServerStmt struct {
-	group string
-	ip    *IdentExpr
-	port  *NumExpr
-	stmts []Statement
+	group  string
+	ip     *IdentExpr
+	port   *NumExpr
+	fwmark *NumExpr
+	stmts  []Statement
 }
 
 type SorryServerStmt struct {
@@ -134,15 +135,15 @@ func (x *VirtualIpaddressStmt) String() string {
 func (x *VirtualServerGroupStmt) String() string {
 	var ret []string
 	ret = append(ret, "virtual_server_group "+x.group)
-	for _, v := range x.vips {
-		ret = append(ret, v.expr())
+	for _, v := range x.stmts {
+		ret = append(ret, v.String())
 	}
 	return strings.Join(ret[:], " - ")
 }
 
 func (x *VirtualServerStmt) String() string {
 	var ret []string
-	ret = append(ret, "virtual_server group "+x.group)
+	ret = append(ret, "virtual_server : group "+x.group)
 	for _, v := range x.stmts {
 		ret = append(ret, "- "+v.String())
 	}
