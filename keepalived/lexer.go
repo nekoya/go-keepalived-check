@@ -41,6 +41,7 @@ var keywords = map[string]int{
 	"virtual_server": VIRTUAL_SERVER,
 	"group":          GROUP,
 	"delay_loop":     DELAY_LOOP,
+	"sorry_server":   SORRY_SERVER,
 	// LVS scheduler
 	"lvs_sched": LVS_SCHED,
 	"lb_algo":   LB_ALGO,

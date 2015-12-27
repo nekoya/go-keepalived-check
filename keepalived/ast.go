@@ -37,6 +37,11 @@ type VirtualServerStmt struct {
 	stmts []Statement
 }
 
+type SorryServerStmt struct {
+	ip   *IdentExpr
+	port *NumExpr
+}
+
 type RealServerStmt struct {
 	ip    *IdentExpr
 	port  *NumExpr
@@ -109,6 +114,10 @@ func (x *VirtualServerStmt) String() string {
 		ret = append(ret, "- "+v.String())
 	}
 	return strings.Join(ret[:], "\n")
+}
+
+func (x *SorryServerStmt) String() string {
+	return "sorry_server " + x.ip.expr() + ":" + x.port.expr()
 }
 
 func (x *RealServerStmt) String() string {

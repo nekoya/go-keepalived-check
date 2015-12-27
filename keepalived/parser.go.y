@@ -24,7 +24,7 @@ package keepalived
 %token<tok> VIRTUAL_IPADDRESS DEV
 
 %token<tok> VIRTUAL_SERVER_GROUP VIRTUAL_SERVER GROUP
-%token<tok> DELAY_LOOP
+%token<tok> DELAY_LOOP SORRY_SERVER
 %token<tok> LVS_SCHED LB_ALGO RR WRR LC WLC LBLC SH DH
 %token<tok> LVS_METHOD LB_KIND NAT DR TUN
 %token<tok> PROTOCOL TCP
@@ -138,6 +138,10 @@ virtual_server_stmt
     | PROTOCOL TCP
     {
         $$ = &ExprStmt{key: &IdentExpr{lit: $1.lit}, value: &IdentExpr{lit: $2.lit}}
+    }
+    | SORRY_SERVER IP NUMBER
+    {
+        $$ = &SorryServerStmt{ip: &IdentExpr{lit: $2.lit}, port: &NumExpr{lit: $3.lit}}
     }
     | REAL_SERVER IP NUMBER '{' real_server_stmts '}'
     {
